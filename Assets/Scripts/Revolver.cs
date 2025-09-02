@@ -1,4 +1,7 @@
 using UnityEngine;
+using TMPro;
+using System.Threading;
+using UnityEngine.SceneManagement;
 
 public class Revolver : MonoBehaviour
 {
@@ -12,12 +15,19 @@ public class Revolver : MonoBehaviour
 
     [Header("Shoot Data")]
     [SerializeField] private float shootDistance = 100f;      // mermi menzili
+    [SerializeField] private float shootCooldown = 0.5f;
+    private float lastShootTime = -999f;
 
     private RaycastHit currentHit; // o an bakılan nokta (cache)
 
     [Header("Sound Data")]
     [SerializeField] private AudioSource shootAudioSource;
     [SerializeField] private AudioSource breakAudioSource;
+
+    [Header("Text Data")]
+    public int score = 0;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI timeText;
 
     private void Start()
     {
@@ -28,33 +38,42 @@ public class Revolver : MonoBehaviour
         AimUpdate();
         CheckInputs();
         RevolverRotation();
+        TimerUpdate();
     }
 
     private void CheckInputs()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0) && Time.time >= lastShootTime + shootCooldown)
         {
             Shoot();
+            lastShootTime = Time.time; // zamanı güncelle
         }
     }
 
-private void Shoot()
-{
-    shootAudioSource.Play();
-
-    if (currentHit.collider != null && currentHit.collider.CompareTag("TargetHead"))
+    private void Shoot()
     {
-        Transform parent = currentHit.collider.transform.parent;
+        shootAudioSource.Play();
 
-        breakAudioSource.Play();
-        Destroy(parent.gameObject);
-    }
-    else
-    {
-        //Misfire
-    }
-}
+        if (currentHit.collider != null && currentHit.collider.CompareTag("TargetHead"))
+        {
+            Transform parent = currentHit.collider.transform.parent;
 
+            breakAudioSource.Play();
+
+            Target targetScript = parent.GetComponent<Target>();
+            if (targetScript != null)
+            {
+                score += 100;
+                targetScript.isHit = true;
+                Debug.Log("Score: " + score);
+                scoreText.text = "Score: " + score;
+            }
+        }
+        else
+        {
+            //Misfire
+        }
+    }
 
     private void AimUpdate()
     {
@@ -81,5 +100,28 @@ private void Shoot()
             targetRotation,
             revolverRotationSpeed * Time.deltaTime
         );
+    }
+
+    private void TimerUpdate()
+    {
+        float time = Mathf.Max(0f, 30f - Time.timeSinceLevelLoad);
+        int minutes = Mathf.FloorToInt(time / 60f);
+        int seconds = Mathf.FloorToInt(time % 60f);
+        timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+        if (time <= 0f)
+        {
+            // Oyun bittiğinde yapılacak işlemler
+            timeText.text = "00:00";
+            PlayerPrefs.SetInt("Score", score);
+            PlayerPrefs.Save();
+
+            GameOverLoad();
+        }
+    }
+
+    private void GameOverLoad()
+    {
+        SceneManager.LoadScene("GameOver");
     }
 }
