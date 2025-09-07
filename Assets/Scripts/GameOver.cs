@@ -16,7 +16,7 @@ public class GameOver : MonoBehaviour
 
     }
 
-    private void NumbarRaise()
+    private void NumberRaise()
     {
         
     }

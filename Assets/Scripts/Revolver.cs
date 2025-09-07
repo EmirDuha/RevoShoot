@@ -17,6 +17,7 @@ public class Revolver : MonoBehaviour
     [SerializeField] private float shootDistance = 100f;      // mermi menzili
     [SerializeField] private float shootCooldown = 0.5f;
     private float lastShootTime = -999f;
+    private float startDelay = 2f;
 
     private RaycastHit currentHit; // o an bakılan nokta (cache)
 
@@ -31,8 +32,9 @@ public class Revolver : MonoBehaviour
 
     private void Start()
     {
-
+        lastShootTime = Time.time + startDelay;
     }
+    
     private void Update()
     {
         AimUpdate();
@@ -49,6 +51,7 @@ public class Revolver : MonoBehaviour
             lastShootTime = Time.time; // zamanı güncelle
         }
     }
+
 
     private void Shoot()
     {
