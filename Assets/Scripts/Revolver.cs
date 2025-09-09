@@ -34,7 +34,7 @@ public class Revolver : MonoBehaviour
     {
         lastShootTime = Time.time + startDelay;
     }
-    
+
     private void Update()
     {
         AimUpdate();
@@ -61,7 +61,7 @@ public class Revolver : MonoBehaviour
         {
             Transform parent = currentHit.collider.transform.parent;
 
-            breakAudioSource.Play();
+            StartCoroutine(PlayBreakSoundDelayed(0.1f));
 
             Target targetScript = parent.GetComponent<Target>();
             if (targetScript != null)
@@ -75,7 +75,14 @@ public class Revolver : MonoBehaviour
         else
         {
             //Misfire
+            
         }
+    }
+
+    private System.Collections.IEnumerator PlayBreakSoundDelayed(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        breakAudioSource.Play();
     }
 
     private void AimUpdate()
