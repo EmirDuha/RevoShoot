@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Threading;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class Revolver : MonoBehaviour
 {
@@ -10,16 +11,16 @@ public class Revolver : MonoBehaviour
     [SerializeField] private float revolverRotationSpeed = 10f;
 
     [Header("Aim Data")]
-    [SerializeField] private Transform aimTransform;          // nişan küresi
-    [SerializeField] private LayerMask aimColliderLayerMask;  // hedeflerin layer’ı
+    [SerializeField] private Transform aimTransform;
+    [SerializeField] private LayerMask aimColliderLayerMask;  
 
     [Header("Shoot Data")]
-    [SerializeField] private float shootDistance = 100f;      // mermi menzili
+    [SerializeField] private float shootDistance = 100f;
     [SerializeField] private float shootCooldown = 0.5f;
     private float lastShootTime = -999f;
     private float startDelay = 2f;
 
-    private RaycastHit currentHit; // o an bakılan nokta (cache)
+    private RaycastHit currentHit;
 
     [Header("Sound Data")]
     [SerializeField] private AudioSource shootAudioSource;
@@ -27,6 +28,7 @@ public class Revolver : MonoBehaviour
 
     [Header("Text Data")]
     public int score = 0;
+    [SerializeField] private float gameTime = 30f;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI timeText;
 
@@ -48,7 +50,7 @@ public class Revolver : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0) && Time.time >= lastShootTime + shootCooldown)
         {
             Shoot();
-            lastShootTime = Time.time; // zamanı güncelle
+            lastShootTime = Time.time;
         }
     }
 
@@ -75,11 +77,10 @@ public class Revolver : MonoBehaviour
         else
         {
             //Misfire
-            
         }
     }
 
-    private System.Collections.IEnumerator PlayBreakSoundDelayed(float delay)
+    private IEnumerator PlayBreakSoundDelayed(float delay)
     {
         yield return new WaitForSeconds(delay);
         breakAudioSource.Play();
@@ -95,9 +96,8 @@ public class Revolver : MonoBehaviour
         }
         else
         {
-            // boşluğa bakıyorsa küreyi ileri sabit noktaya koy
             aimTransform.position = ray.GetPoint(shootDistance);
-            currentHit = new RaycastHit(); // resetle
+            currentHit = new RaycastHit();
         }
     }
 
@@ -114,14 +114,13 @@ public class Revolver : MonoBehaviour
 
     private void TimerUpdate()
     {
-        float time = Mathf.Max(0f, 30f - Time.timeSinceLevelLoad);
+        float time = Mathf.Max(0f, gameTime - Time.timeSinceLevelLoad);
         int minutes = Mathf.FloorToInt(time / 60f);
         int seconds = Mathf.FloorToInt(time % 60f);
         timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
 
         if (time <= 0f)
         {
-            // Oyun bittiğinde yapılacak işlemler
             timeText.text = "00:00";
             PlayerPrefs.SetInt("Score", score);
             PlayerPrefs.Save();

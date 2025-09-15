@@ -3,14 +3,16 @@ using System.Collections;
 
 public class Target : MonoBehaviour
 {
-    private float lifetime = 2f; // sahnede kalacağı süre
+    [SerializeField] private float lifeTime = 2f;
+    private float currentLifeTime;
+    [SerializeField] private float minRespawnTime = 2f;
+    [SerializeField] private float maxRespawnTime = 10f;
     private bool isCountingDown = false;
     public bool isHit = false;
 
     private void OnEnable()
     {
-        // Her spawn olduğunda lifetime resetlenir
-        lifetime = 2f;
+        currentLifeTime = lifeTime;
         isCountingDown = true;
     }
 
@@ -23,27 +25,23 @@ public class Target : MonoBehaviour
     {
         if (isCountingDown)
         {
-            lifetime -= Time.deltaTime;
+            currentLifeTime -= Time.deltaTime;
 
-            if (lifetime <= 0f || isHit)
+            if (currentLifeTime <= 0f || isHit)
             {
-                // Rastgele respawn süresi seç
-                float respawnTime = Random.Range(2f, 10f);
+                float respawnTime = Random.Range(minRespawnTime, maxRespawnTime);
                 TargetManager.Instance.RespawnTarget(gameObject, respawnTime);
 
                 Animator anim = GetComponent<Animator>();
                 if (anim != null)
                 {
-                    anim.SetTrigger("Disappear");
+                    anim.Play("TargetDisappear");
                     StartCoroutine(DisableAfterAnim());
                 }
                 else
                 {
                     gameObject.SetActive(false);
                 }
-
-
-                // Reset
                 isHit = false;
                 isCountingDown = false;
             }
@@ -52,7 +50,7 @@ public class Target : MonoBehaviour
 
     private IEnumerator DisableAfterAnim()
     {
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(0.3f);
         gameObject.SetActive(false);
     }
 }

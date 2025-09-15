@@ -30,7 +30,7 @@ public class TargetManager : MonoBehaviour
         }
         else if (anim != null && gameObject.CompareTag("RightSidedTarget"))
         {
-            anim.Play("RightSidedTargetSpawn", -1, 0f);
+            anim.Play("RightSidedTargetSpawn");
         }
     }
 }
