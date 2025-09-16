@@ -3,54 +3,111 @@ using System.Collections;
 
 public class Target : MonoBehaviour
 {
-    [SerializeField] private float lifeTime = 2f;
-    private float currentLifeTime;
-    [SerializeField] private float minRespawnTime = 2f;
-    [SerializeField] private float maxRespawnTime = 10f;
+
+
+    [Header("Target Lifetime")]
+    [SerializeField] private float lifetime = 4f;
+    private float currentLifetime;
     private bool isCountingDown = false;
-    public bool isHit = false;
+    public bool isDown = false;
+
+    [Header("Time Settings")]
+    [SerializeField] private float minRespawnTime = 2f;
+    [SerializeField] private float maxRespawnTime = 5f;
+
+    [Header("Colliders and Animation")]
+    private Collider col;
+    private Transform pivotTransform;
+    private Quaternion initialRotation;
+    private float aimAngle = 90f;
+
+    private void Awake()
+    {
+        col = GetComponent<Collider>();
+
+        pivotTransform = transform.parent;
+    }
 
     private void OnEnable()
     {
-        currentLifeTime = lifeTime;
-        isCountingDown = true;
+        initialRotation = pivotTransform.localRotation;
+        ResetTarget();
     }
 
     private void Update()
     {
-        TargetDisappear();
-    }
-
-    private void TargetDisappear()
-    {
-        if (isCountingDown)
+        if (isCountingDown && !isDown)
         {
-            currentLifeTime -= Time.deltaTime;
+            currentLifetime -= Time.deltaTime;
 
-            if (currentLifeTime <= 0f || isHit)
+            if (currentLifetime <= 0f)
             {
-                float respawnTime = Random.Range(minRespawnTime, maxRespawnTime);
-                TargetManager.Instance.RespawnTarget(gameObject, respawnTime);
-
-                Animator anim = GetComponent<Animator>();
-                if (anim != null)
-                {
-                    anim.Play("TargetDisappear");
-                    StartCoroutine(DisableAfterAnim());
-                }
-                else
-                {
-                    gameObject.SetActive(false);
-                }
-                isHit = false;
-                isCountingDown = false;
+                TargetDown();
             }
         }
     }
 
-    private IEnumerator DisableAfterAnim()
+    private void TargetDown()
     {
-        yield return new WaitForSeconds(0.3f);
-        gameObject.SetActive(false);
+        if (!isDown)
+        {
+            isDown = true;
+            isCountingDown = false;
+
+            if (col != null) col.enabled = false;
+
+            StartCoroutine(FallOverAnim());
+
+            TargetManager.Instance.RespawnEnemy(this, Random.Range(minRespawnTime, maxRespawnTime));
+        }
+    }
+
+    private IEnumerator FallOverAnim()
+    {
+        Quaternion startRot = pivotTransform.localRotation;
+        Quaternion targetRot = startRot * Quaternion.Euler(aimAngle, 0f, 0f);
+
+        float animTime = 0f;
+        while (animTime < 1f)
+        {
+            animTime += Time.deltaTime * 10f;
+            pivotTransform.localRotation = Quaternion.Slerp(startRot, targetRot, animTime);
+            yield return null;
+        }
+    }
+
+    public IEnumerator StandUpAnim()
+    {
+        Quaternion startRot = pivotTransform.localRotation;
+        Quaternion targetRot = initialRotation;
+
+        float animTime = 0f;
+        while (animTime < 1f)
+        {
+            animTime += Time.deltaTime * 10f;
+            pivotTransform.localRotation = Quaternion.Slerp(startRot, targetRot, animTime);
+            yield return null;
+        }
+
+        ResetTarget();
+    }
+
+
+    public void ResetTarget()
+    {
+        currentLifetime = lifetime;
+        isDown = false;
+        isCountingDown = true;
+
+        if (col != null) col.enabled = true;
+    }
+
+    public void GetShot()
+    {
+        if (!isDown)
+        {
+            TargetDown();
+            TargetManager.Instance.score += 100;
+        }
     }
 }

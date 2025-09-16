@@ -1,36 +1,36 @@
-using System.Collections;
 using UnityEngine;
+using System.Collections;
 
 public class TargetManager : MonoBehaviour
 {
-    public static TargetManager Instance;
+    public static TargetManager Instance { get; private set; }
+    public int score = 0;
 
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+        }
         else
-            Destroy(gameObject);
+        {
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
     }
 
-    public void RespawnTarget(GameObject target, float delay)
+    public void RespawnEnemy(Target enemy, float delay)
     {
-        StartCoroutine(RespawnCoroutine(target, delay));
+        StartCoroutine(RespawnCoroutine(enemy, delay));
     }
 
-    private IEnumerator RespawnCoroutine(GameObject target, float delay)
+    private IEnumerator RespawnCoroutine(Target enemy, float delay)
     {
         yield return new WaitForSeconds(delay);
-        target.SetActive(true);
 
-        Animator anim = target.GetComponent<Animator>();
-        if (anim != null && gameObject.CompareTag("Target"))
+        if (enemy != null)
         {
-            anim.Play("TargetSpawn", -1, 0f);
-        }
-        else if (anim != null && gameObject.CompareTag("RightSidedTarget"))
-        {
-            anim.Play("RightSidedTargetSpawn");
+            yield return enemy.StandUpAnim();
         }
     }
 }

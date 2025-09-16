@@ -27,7 +27,6 @@ public class Revolver : MonoBehaviour
     [SerializeField] private AudioSource breakAudioSource;
 
     [Header("Text Data")]
-    public int score = 0;
     [SerializeField] private float gameTime = 30f;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI timeText;
@@ -68,10 +67,8 @@ public class Revolver : MonoBehaviour
             Target targetScript = parent.GetComponent<Target>();
             if (targetScript != null)
             {
-                score += 100;
-                targetScript.isHit = true;
-                Debug.Log("Score: " + score);
-                scoreText.text = "Score: " + score;
+                targetScript.GetShot();
+                scoreText.text = "Score: " + TargetManager.Instance.score;
             }
         }
         else
@@ -122,7 +119,7 @@ public class Revolver : MonoBehaviour
         if (time <= 0f)
         {
             timeText.text = "00:00";
-            PlayerPrefs.SetInt("Score", score);
+            PlayerPrefs.SetInt("Score", TargetManager.Instance.score);
             PlayerPrefs.Save();
 
             GameOverLoad();
