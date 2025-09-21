@@ -19,18 +19,18 @@ public class TargetManager : MonoBehaviour
         }
     }
 
-    public void RespawnEnemy(Target enemy, float delay)
+    public void RespawnTarget(Target target, float delay)
     {
-        StartCoroutine(RespawnCoroutine(enemy, delay));
+        StartCoroutine(RespawnCoroutine(target, delay));
     }
 
-    private IEnumerator RespawnCoroutine(Target enemy, float delay)
+    private IEnumerator RespawnCoroutine(Target target, float delay)
     {
         yield return new WaitForSeconds(delay);
 
-        if (enemy != null)
+        if (target != null)
         {
-            yield return enemy.StandUpAnim();
+            yield return target.StandUpAnim();
         }
     }
 }

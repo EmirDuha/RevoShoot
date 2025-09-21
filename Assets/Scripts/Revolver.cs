@@ -62,11 +62,10 @@ public class Revolver : MonoBehaviour
         {
             Transform parent = currentHit.collider.transform.parent;
 
-            StartCoroutine(PlayBreakSoundDelayed(0.1f));
-
             Target targetScript = parent.GetComponent<Target>();
-            if (targetScript != null)
+            if (targetScript != null && !targetScript.isDown)
             {
+                StartCoroutine(PlayBreakSoundDelayed(0.1f));
                 targetScript.GetShot();
                 scoreText.text = "Score: " + TargetManager.Instance.score;
             }

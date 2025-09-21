@@ -1,6 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
+public enum TargetType
+{
+    Default,
+    RightSided
+}
+
 public class Target : MonoBehaviour
 {
 
@@ -19,7 +25,10 @@ public class Target : MonoBehaviour
     private Collider col;
     private Transform pivotTransform;
     private Quaternion initialRotation;
-    private float aimAngle = 90f;
+    private float animAngle = 90f;
+
+    [Header("Target Type")]
+    [SerializeField] private TargetType targetType;
 
     private void Awake()
     {
@@ -56,16 +65,33 @@ public class Target : MonoBehaviour
 
             if (col != null) col.enabled = false;
 
-            StartCoroutine(FallOverAnim());
+            if (targetType == TargetType.Default)
+                StartCoroutine(FallOverAnim());
+            else if (targetType == TargetType.RightSided)
+                StartCoroutine(FallOverAnimRight());
 
-            TargetManager.Instance.RespawnEnemy(this, Random.Range(minRespawnTime, maxRespawnTime));
+            TargetManager.Instance.RespawnTarget(this, Random.Range(minRespawnTime, maxRespawnTime));
         }
     }
 
     private IEnumerator FallOverAnim()
     {
         Quaternion startRot = pivotTransform.localRotation;
-        Quaternion targetRot = startRot * Quaternion.Euler(aimAngle, 0f, 0f);
+        Quaternion targetRot = startRot * Quaternion.Euler(animAngle, 0f, 0f);
+
+        float animTime = 0f;
+        while (animTime < 1f)
+        {
+            animTime += Time.deltaTime * 10f;
+            pivotTransform.localRotation = Quaternion.Slerp(startRot, targetRot, animTime);
+            yield return null;
+        }
+    }
+
+    private IEnumerator FallOverAnimRight()
+    {
+        Quaternion startRot = pivotTransform.localRotation;
+        Quaternion targetRot = startRot * Quaternion.Euler(0f, 0f, animAngle / 2 + 10);
 
         float animTime = 0f;
         while (animTime < 1f)
@@ -91,7 +117,6 @@ public class Target : MonoBehaviour
 
         ResetTarget();
     }
-
 
     public void ResetTarget()
     {

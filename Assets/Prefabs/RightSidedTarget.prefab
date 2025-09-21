@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4995742343194716974}
   m_Layer: 7
   m_Name: RightSidedTarget
-  m_TagString: Untagged
+  m_TagString: RightSidedTarget
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
