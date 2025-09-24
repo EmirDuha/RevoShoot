@@ -12,7 +12,7 @@ public class Revolver : MonoBehaviour
 
     [Header("Aim Data")]
     [SerializeField] private Transform aimTransform;
-    [SerializeField] private LayerMask aimColliderLayerMask;  
+    [SerializeField] private LayerMask aimColliderLayerMask;
 
     [Header("Shoot Data")]
     [SerializeField] private float shootDistance = 100f;
