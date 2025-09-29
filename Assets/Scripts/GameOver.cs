@@ -1,23 +1,36 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class GameOver : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI finalScoreText;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private int textScore = 0;
+
     void Start()
     {
-        finalScoreText.text = "Final Score: " + PlayerPrefs.GetInt("Score", 0).ToString();
+        
     }
 
-    // Update is called once per frame
     void Update()
     {
-
+        StartScoreCount();
     }
 
-    private void NumberRaise()
+    public void StartScoreCount()
     {
-        
+        StartCoroutine(ScoreCount());
+    }
+
+    private IEnumerator ScoreCount()
+    {
+        yield return new WaitForSeconds(1f);
+
+        while (textScore <= PlayerPrefs.GetInt("Score", 0))
+        {
+            finalScoreText.text = textScore.ToString();
+            textScore++;
+            yield return new WaitForSeconds(0.05f);
+        }
     }
 }

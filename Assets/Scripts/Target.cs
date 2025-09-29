@@ -1,10 +1,12 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public enum TargetType
 {
     Default,
-    RightSided
+    RightSided,
+    Moving
 }
 
 public class Target : MonoBehaviour
@@ -66,18 +68,20 @@ public class Target : MonoBehaviour
             if (col != null) col.enabled = false;
 
             if (targetType == TargetType.Default)
-                StartCoroutine(FallOverAnim());
+                StartCoroutine(FallOverAnim(animAngle));
             else if (targetType == TargetType.RightSided)
                 StartCoroutine(FallOverAnimRight());
+            else if (targetType == TargetType.Moving)
+                StartCoroutine(FallOverAnim(-animAngle));
 
             TargetManager.Instance.RespawnTarget(this, Random.Range(minRespawnTime, maxRespawnTime));
         }
     }
 
-    private IEnumerator FallOverAnim()
+    private IEnumerator FallOverAnim(float angle)
     {
         Quaternion startRot = pivotTransform.localRotation;
-        Quaternion targetRot = startRot * Quaternion.Euler(animAngle, 0f, 0f);
+        Quaternion targetRot = startRot * Quaternion.Euler(angle, 0f, 0f);
 
         float animTime = 0f;
         while (animTime < 1f)
