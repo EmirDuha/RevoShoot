@@ -2,23 +2,34 @@ using UnityEngine;
 
 public class MovingfPlatform : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private float moveTime = 4f;
+    private bool moveLeft = true;
+
     void Start()
     {
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         HorizontalMovement();
-
     }
 
     private void HorizontalMovement()
     {
-        transform.Translate(Vector3.left * Time.deltaTime);
-
+        if (Time.time <= moveTime && moveLeft)
+        {
+            transform.Translate(Vector3.left * Time.deltaTime * 1.5f);
+        }
+        else if (Time.time <= moveTime && !moveLeft)
+        {
+            transform.Translate(Vector3.right * Time.deltaTime * 1.5f);
+        }
+        else
+        {
+            moveLeft = !moveLeft;
+            moveTime = Time.time + 4f;
+        }
 
     }
 }
