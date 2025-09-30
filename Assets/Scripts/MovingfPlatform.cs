@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class MovingfPlatform : MonoBehaviour
 {
-    private float moveTime = 4f;
-    private bool moveLeft = true;
+    [SerializeField] private float moveTime = 4f;
+    [SerializeField] private float addTime = 4f;
+    [SerializeField] private float moveSpeed = 1.5f;
+     private bool moveLeft = true;
 
     void Start()
     {
@@ -19,16 +21,16 @@ public class MovingfPlatform : MonoBehaviour
     {
         if (Time.time <= moveTime && moveLeft)
         {
-            transform.Translate(Vector3.left * Time.deltaTime * 1.5f);
+            transform.Translate(Vector3.left * Time.deltaTime * moveSpeed);
         }
         else if (Time.time <= moveTime && !moveLeft)
         {
-            transform.Translate(Vector3.right * Time.deltaTime * 1.5f);
+            transform.Translate(Vector3.right * Time.deltaTime * moveSpeed);
         }
         else
         {
             moveLeft = !moveLeft;
-            moveTime = Time.time + 4f;
+            moveTime = Time.time + addTime;
         }
 
     }

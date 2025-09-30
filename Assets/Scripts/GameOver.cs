@@ -28,7 +28,7 @@ public class GameOver : MonoBehaviour
 
         while (textScore <= PlayerPrefs.GetInt("Score", 0))
         {
-            finalScoreText.text = textScore.ToString();
+            finalScoreText.text = "Your Score: " + textScore.ToString();
             textScore++;
             yield return new WaitForSeconds(0.05f);
         }
