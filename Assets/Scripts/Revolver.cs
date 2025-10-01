@@ -48,7 +48,7 @@ public class Revolver : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Mouse0) && Time.time >= lastShootTime + shootCooldown)
         {
-            Shoot();
+            Shoot(); 
             lastShootTime = Time.time;
         }
     }
