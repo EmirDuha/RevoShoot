@@ -11,6 +11,7 @@ TagManager:
   - Target
   - RightSidedTarget
   - Moving
+  - PowerUp
   layers:
   - Default
   - TransparentFX

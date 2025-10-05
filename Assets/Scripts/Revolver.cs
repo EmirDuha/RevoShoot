@@ -25,6 +25,7 @@ public class Revolver : MonoBehaviour
     [Header("Sound Data")]
     [SerializeField] private AudioSource shootAudioSource;
     [SerializeField] private AudioSource breakAudioSource;
+    [SerializeField] private AudioSource PowerUpAudioSource;
 
     [Header("Text Data")]
     [SerializeField] private float gameTime = 30f;
@@ -69,6 +70,13 @@ public class Revolver : MonoBehaviour
                 targetScript.GetShot();
                 scoreText.text = "Score: " + TargetManager.Instance.score;
             }
+        }
+        else if (currentHit.collider != null && currentHit.collider.CompareTag("PowerUp"))
+        {
+            PowerUpAudioSource.Play();
+            Destroy(currentHit.collider.gameObject);
+            gameTime += 5f;
+            if (gameTime > 99f) gameTime = 99f;
         }
         else
         {
