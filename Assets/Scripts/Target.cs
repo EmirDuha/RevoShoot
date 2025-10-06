@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Unity.VisualScripting;
+using Unity.Collections;
 
 public enum TargetType
 {
@@ -68,34 +69,25 @@ public class Target : MonoBehaviour
             if (col != null) col.enabled = false;
 
             if (targetType == TargetType.Default)
-                StartCoroutine(FallOverAnim(animAngle));
+                StartCoroutine(FallOverAnim(animAngle, "x"));
             else if (targetType == TargetType.RightSided)
-                StartCoroutine(FallOverAnimRight());
+                StartCoroutine(FallOverAnim(animAngle, "z"));
             else if (targetType == TargetType.Moving)
-                StartCoroutine(FallOverAnim(-animAngle));
+                StartCoroutine(FallOverAnim(-animAngle, "x"));
 
             TargetManager.Instance.RespawnTarget(this, Random.Range(minRespawnTime, maxRespawnTime));
         }
     }
 
-    private IEnumerator FallOverAnim(float angle)
+    private IEnumerator FallOverAnim(float angle, string axis)
     {
         Quaternion startRot = pivotTransform.localRotation;
-        Quaternion targetRot = startRot * Quaternion.Euler(angle, 0f, 0f);
+        Quaternion targetRot;
 
-        float animTime = 0f;
-        while (animTime < 1f)
-        {
-            animTime += Time.deltaTime * 10f;
-            pivotTransform.localRotation = Quaternion.Slerp(startRot, targetRot, animTime);
-            yield return null;
-        }
-    }
-
-    private IEnumerator FallOverAnimRight()
-    {
-        Quaternion startRot = pivotTransform.localRotation;
-        Quaternion targetRot = startRot * Quaternion.Euler(0f, 0f, animAngle / 2 + 10);
+        if (axis == "z")
+            targetRot = startRot * Quaternion.Euler(0f, 0f, angle / 2 + 10);
+        else
+            targetRot = startRot * Quaternion.Euler(angle, 0f, 0f);
 
         float animTime = 0f;
         while (animTime < 1f)
