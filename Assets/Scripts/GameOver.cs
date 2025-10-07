@@ -12,7 +12,7 @@ public class GameOver : MonoBehaviour
         
     }
 
-    void Update()
+    private void Update()
     {
         StartScoreCount();
     }
@@ -32,5 +32,6 @@ public class GameOver : MonoBehaviour
             textScore++;
             yield return new WaitForSeconds(0.05f);
         }
+
     }
 }
