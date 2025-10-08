@@ -19,7 +19,6 @@ public class Revolver : MonoBehaviour
     [SerializeField] private float shootCooldown = 0.5f;
     private float lastShootTime = -999f;
     private float startDelay = 2f;
-
     private RaycastHit currentHit;
 
     [Header("Sound Data")]
@@ -31,6 +30,9 @@ public class Revolver : MonoBehaviour
     [SerializeField] private float gameTime = 30f;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI timeText;
+
+    [Header("Class Objects")]
+    [SerializeField] private CountDownText countDownText;
 
     private void Start()
     {
@@ -47,7 +49,7 @@ public class Revolver : MonoBehaviour
 
     private void CheckInputs()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0) && Time.time >= lastShootTime + shootCooldown)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && Time.time >= lastShootTime + shootCooldown && !countDownText.isCountingDown)
         {
             Shoot(); 
             lastShootTime = Time.time;
