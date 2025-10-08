@@ -1,21 +1,25 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
+
 
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] private Slider slider;
 
-
-    void Start()
-    {
-
-    }
-
     public void StartGame()
     {
         SceneManager.LoadScene("SampleScene");
+    }
+
+    private void Update()
+    {
+        Slider();
+    }
+
+    private void Slider()
+    {
+        slider.value = AudioListener.volume;
     }
 
     public void QuitGame()
