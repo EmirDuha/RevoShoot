@@ -16,11 +16,6 @@ public class CountDownText : MonoBehaviour
 
     }
 
-    private void Update()
-    {
-
-    }
-
     private IEnumerator CountDown()
     {
         float currentTime = countDownTime;

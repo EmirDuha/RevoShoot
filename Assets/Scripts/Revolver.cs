@@ -120,6 +120,8 @@ public class Revolver : MonoBehaviour
 
     private void TimerUpdate()
     {
+        if (countDownText.isCountingDown) return;
+        
         float time = Mathf.Max(0f, gameTime - Time.timeSinceLevelLoad);
         int minutes = Mathf.FloorToInt(time / 60f);
         int seconds = Mathf.FloorToInt(time % 60f);
