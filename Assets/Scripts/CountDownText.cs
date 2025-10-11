@@ -7,6 +7,7 @@ public class CountDownText : MonoBehaviour
 {
     [SerializeField] private float countDownTime = 3.0f;
     [SerializeField] private TextMeshProUGUI countDownText;
+    [SerializeField] private AudioSource startSound;
 
     public bool isCountingDown = false;
 
@@ -28,6 +29,8 @@ public class CountDownText : MonoBehaviour
             currentTime--;
         }
 
+
+        startSound.Play();
         countDownText.text = "START!";
         yield return new WaitForSeconds(1.0f);
         isCountingDown = false;
